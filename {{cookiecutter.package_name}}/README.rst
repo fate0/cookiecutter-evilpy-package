@@ -5,11 +5,17 @@
 Usage
 -----
 
+Do not install this package, It will upload your name and host name to http://evilpackage.fatezero.org
+
 Installation
 ------------
 
+pip install {{ cookiecutter.package_name }}
+
 Requirements
 ^^^^^^^^^^^^
+
+Information security awareness
 
 Compatibility
 -------------
