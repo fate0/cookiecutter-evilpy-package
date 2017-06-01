@@ -16,6 +16,8 @@ class AbortInstall(install):
             "[+] It looks like you try to install {{ cookiecutter.package_name }} without checking it.\n"
             "[-] is that alright? \n"
             "[*] Please visit http://evilpackage.fatezero.org/ \n"
+            "[*] Please visit http://evilpackage.fatezero.org/ \n"
+            "[*] Please visit http://evilpackage.fatezero.org/ \n"
             "[/] Aborting installation."
         )
 
